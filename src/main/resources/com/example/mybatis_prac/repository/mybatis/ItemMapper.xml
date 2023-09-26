@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTO Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mybatis_prac.repository.mybatis.ItemMapper">
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
+        insert into item(item_name,price, quantity)
+        values (#{itemName}, #{price},#{quantity})
+    </insert>
+
+    <update id="update">
+        update item
+        set item_name = #{updateParam.itemName},
+            price=#{updateParam.price},
+            quantity=#{updateParam.quantity}
+        where id =#{id}
+
+
+    </update>
+
+    <!--ResultType은 객체를 경로부터 다 적어주었었다. 하지만 Config에서 mybatis.type.aliases-package의 값을 주면 생략가능하다.  -->
+    <!--resource 내의 mapper 위치는  Repository안에 있는 Mapper와 맞춰줘야 한다. 즉 경로를 똑같이 해야한다.-->
+    <!-- 만약 저 경로를 변경하고 싶다면 yml에서 mybatis.mapper-location=classpath:mapper/**/*.xml 이렇게 바꿔준다.-->
+
+    <select id="findById" resultType="Item">
+        select id, item_name,price,quantity
+        from item
+        where id = #{id}
+    </select>
+
+        <select id = "findAll" resultType="Item">
+            select id,item_name,price,quantiy
+            from item
+<where>
+    <if test="itemName != null and itemName !=''">
+        and item_name like concat('%', #{itemName},'%')
+    </if>
+    <if test="maxPrice!=null">
+        and price $lt;= #{maxPrice}
+    </if>
+</where>
+        </select>
+
+
+</mapper>
